@@ -26,6 +26,8 @@ public class EmServiceImplement implements EmService{
         return "Saved Successfully"; 
     }
 
+
+
     @Override
     public List<Employee> readEmployee() {
         List<EmEntity> employeesList = emRepository.findAll();
@@ -33,13 +35,17 @@ public class EmServiceImplement implements EmService{
         for (EmEntity emEntity : employeesList) {
 
             Employee emp = new Employee();   //OBJECT TO STORE DATA FROM DB
+            emp.setId(emEntity.getId());
             emp.setName(emEntity.getName());
             emp.setEmail(emEntity.getEmail());
+            emp.setPhone(emEntity.getPhone());
 
             employees.add(emp);
         }
         return employees;
     }
+
+
 
     //@Override
     // public boolean deleteEmployee(Long id) {
@@ -55,8 +61,36 @@ public class EmServiceImplement implements EmService{
     //         return true;
     //     }
     // }
-    return false;
     
+    EmEntity emp = emRepository.findById(id).get();
+    emRepository.delete(emp);
+    return true;
     }
 
+
+
+    @Override
+    public String updateEmployee(Long id, Employee employee) {
+        EmEntity exisitingEmployee = emRepository.findById(id).get();
+        exisitingEmployee.setName(employee.getName());
+        exisitingEmployee.setEmail(employee.getEmail());
+        exisitingEmployee.setPhone(employee.getPhone());
+
+        emRepository.save(exisitingEmployee);    //SAVING UPDATED EMPLOYEE TO DB
+        return "Updated Successfully";
+    }
+
+
+    @Override
+    public Employee readEmployees(Long id) {
+        EmEntity emEntity = emRepository.findById(id).get();
+        Employee employee = new Employee();   
+        BeanUtils.copyProperties(emEntity, employee); //COPYING PROPERTIES FROM EMENTITY TO EMPLOYEE
+
+        return employee;
+    }
+
+
+
+    
 }
